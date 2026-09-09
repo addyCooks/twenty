@@ -124,7 +124,7 @@ export class FileUploader {
 
       try {
         await putFileToUploadUrl({
-          absolutePath: path.join(this.appPath, builtPath),
+          file: path.join(this.appPath, builtPath),
           uploadUrl: target.uploadUrl,
           contentType: target.contentType,
         });

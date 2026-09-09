@@ -1,5 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ApplicationTarballUploadService } from 'src/engine/core-modules/application/application-registration/application-tarball-upload.service';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
@@ -34,6 +38,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
       ApplicationRegistrationEntity,
       ApplicationEntity,
       WorkspaceEntity,
+      FileEntity,
     ]),
     ApplicationRegistrationVariableModule,
     ApplicationModule,
@@ -47,6 +52,7 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     JwtModule,
     PermissionsModule,
     FileStorageModule,
+    FileUploadModule,
     FileUrlModule,
     MetricsModule,
     WorkspaceCacheStorageModule,
@@ -58,6 +64,8 @@ import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/
     ApplicationRegistrationResolver,
     ApplicationRegistrationSummaryResolver,
     ApplicationTarballService,
+    ApplicationTarballUploadService,
+    provideWorkspaceScopedRepository(FileEntity),
     ApplicationRegistrationAssetService,
     ApplicationRegistrationAssetUrlService,
   ],

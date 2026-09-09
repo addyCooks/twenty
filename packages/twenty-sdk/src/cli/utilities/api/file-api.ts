@@ -1,4 +1,5 @@
 import { type ApiResponse } from '@/cli/utilities/api/api-response-type';
+import { putFileToUploadUrl } from '@/cli/utilities/file/put-file-to-upload-url';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import axios, { type AxiosInstance, type AxiosResponse } from 'axios';
 import * as fs from 'fs';
@@ -91,6 +92,90 @@ export class FileApi {
   // TODO: Migrate to MetadataClient once available
   // (see https://github.com/twentyhq/core-team-issues/issues/2289)
   async uploadAppTarball({
+    tarballBuffer,
+    universalIdentifier,
+  }: {
+    tarballBuffer: Buffer;
+    universalIdentifier?: string;
+  }): Promise<
+    ApiResponse<{
+      id: string;
+      universalIdentifier: string;
+      name: string;
+    }>
+  > {
+    try {
+      const createResult = await this.runMetadataMutation<
+        Pick<
+          ApplicationFileUploadTarget,
+          'fileId' | 'uploadUrl' | 'contentType'
+        >
+      >({
+        mutation: `
+          mutation CreateAppTarballUpload($size: Int!) {
+            createAppTarballUpload(size: $size) {
+              fileId
+              uploadUrl
+              contentType
+            }
+          }
+        `,
+        variables: { size: tarballBuffer.length },
+        resultKey: 'createAppTarballUpload',
+        defaultErrorMessage: 'Failed to create tarball upload',
+      });
+
+      if (!createResult.success) {
+        const message = serializeError(createResult.error);
+
+        if (
+          message.includes('createAppTarballUpload') &&
+          (message.includes('Cannot query field') ||
+            message.includes('Unknown field'))
+        ) {
+          return this.uploadAppTarballWithMultipart({
+            tarballBuffer,
+            universalIdentifier,
+          });
+        }
+
+        return createResult;
+      }
+
+      const { fileId, uploadUrl, contentType } = createResult.data;
+
+      await putFileToUploadUrl({ file: tarballBuffer, uploadUrl, contentType });
+
+      return this.runMetadataMutation({
+        mutation: `
+          mutation CompleteAppTarballUpload($fileId: UUID!, $universalIdentifier: String) {
+            completeAppTarballUpload(fileId: $fileId, universalIdentifier: $universalIdentifier) {
+              id
+              universalIdentifier
+              name
+            }
+          }
+        `,
+        variables: { fileId, universalIdentifier: universalIdentifier ?? null },
+        resultKey: 'completeAppTarballUpload',
+        defaultErrorMessage: 'Failed to complete tarball upload',
+      });
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        return {
+          success: false,
+          error: error.response.data?.errors?.[0]?.message || error.message,
+        };
+      }
+
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  private async uploadAppTarballWithMultipart({
     tarballBuffer,
     universalIdentifier,
   }: {
@@ -426,6 +511,7 @@ export class FileApi {
         return {
           success: false,
           error: error.response.data?.errors?.[0]?.message || error.message,
+          isAuthError: error.response.status === 401,
         };
       }
 

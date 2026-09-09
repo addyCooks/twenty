@@ -74,6 +74,7 @@ export const createApp = async (
     '/graphql',
     graphqlUploadExpress({
       maxFieldSize: bytes(settings.storage.maxFileSize)!,
+      maxFileSize: bytes(settings.storage.maxFileSize)!,
       maxFiles: 10,
     }),
   );
@@ -82,6 +83,7 @@ export const createApp = async (
     '/metadata',
     graphqlUploadExpress({
       maxFieldSize: bytes(settings.storage.maxFileSize)!,
+      maxFileSize: bytes(settings.storage.maxFileSize)!,
       maxFiles: 10,
     }),
   );

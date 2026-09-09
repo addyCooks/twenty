@@ -4,9 +4,11 @@ import { join } from 'path';
 import { tmpdir } from 'os';
 
 import request from 'supertest';
+import gql from 'graphql-tag';
 import * as tar from 'tar';
 import { type DataSource } from 'typeorm';
 import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -321,6 +323,112 @@ describe('App Distribution (integration)', () => {
       );
 
       expect(rows[0].sourceType).toBe('tarball');
+    });
+  });
+
+  describe('Direct tarball uploads', () => {
+    it('registers a tarball above the multipart limit through a direct PUT', async () => {
+      const uid = crypto.randomUUID();
+      const tarball = await createTestTarball({
+        'manifest.json': createValidManifest(uid),
+        'package.json': JSON.stringify({
+          name: 'large-test-app',
+          version: '1.0.0',
+        }),
+        // Incompressible data keeps the compressed upload above 10 MiB.
+        'asset.bin': crypto.randomBytes(11 * 1024 * 1024).toString('base64'),
+      });
+
+      expect(tarball.length).toBeGreaterThan(10 * 1024 * 1024);
+
+      const { errors: multipartErrors } = await uploadAppTarball({
+        tarballBuffer: tarball,
+        universalIdentifier: uid,
+        expectToFail: true,
+      });
+
+      expect(multipartErrors).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            message: expect.stringContaining('File truncated as it exceeds'),
+          }),
+        ]),
+      );
+
+      const created = await makeMetadataAPIRequest({
+        query: gql`
+          mutation CreateAppTarballUpload($size: Int!) {
+            createAppTarballUpload(size: $size) {
+              fileId
+              uploadUrl
+              contentType
+            }
+          }
+        `,
+        variables: { size: tarball.length },
+      });
+
+      expect(created.body.errors).toBeUndefined();
+
+      const target = created.body.data.createAppTarballUpload;
+      const { pathname, search } = new URL(target.uploadUrl);
+      const uploaded = await request(`http://localhost:${APP_PORT}`)
+        .put(`${pathname}${search}`)
+        .set('Content-Type', target.contentType)
+        .send(tarball);
+
+      expect(uploaded.status).toBe(204);
+
+      const completed = await makeMetadataAPIRequest({
+        query: gql`
+          mutation CompleteAppTarballUpload(
+            $fileId: UUID!
+            $universalIdentifier: String
+          ) {
+            completeAppTarballUpload(
+              fileId: $fileId
+              universalIdentifier: $universalIdentifier
+            ) {
+              id
+              universalIdentifier
+            }
+          }
+        `,
+        variables: { fileId: target.fileId, universalIdentifier: uid },
+      });
+
+      expect(completed.body.errors).toBeUndefined();
+      expect(
+        completed.body.data.completeAppTarballUpload.universalIdentifier,
+      ).toBe(uid);
+      createdRegistrationIds.push(
+        completed.body.data.completeAppTarballUpload.id,
+      );
+
+      const stagingRows = await ds.query(
+        'SELECT id FROM core."file" WHERE id = $1 AND "workspaceId" = $2',
+        [target.fileId, TEST_WORKSPACE_ID],
+      );
+
+      expect(stagingRows).toHaveLength(0);
+    }, 60000);
+
+    it('requires authentication before issuing an upload target', async () => {
+      const response = await makeMetadataAPIRequest(
+        {
+          query: gql`
+            mutation {
+              createAppTarballUpload(size: 1024) {
+                fileId
+              }
+            }
+          `,
+        },
+        null,
+      );
+
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.data?.createAppTarballUpload).toBeFalsy();
     });
   });
 

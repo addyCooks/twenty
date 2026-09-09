@@ -2,15 +2,16 @@ import axios from 'axios';
 import * as fs from 'fs';
 
 export const putFileToUploadUrl = async ({
-  absolutePath,
+  file,
   uploadUrl,
   contentType,
 }: {
-  absolutePath: string;
+  file: string | Buffer;
   uploadUrl: string;
   contentType: string;
 }): Promise<void> => {
-  const buffer = await fs.promises.readFile(absolutePath);
+  const buffer =
+    typeof file === 'string' ? await fs.promises.readFile(file) : file;
 
   await axios.put(uploadUrl, buffer, {
     headers: {
