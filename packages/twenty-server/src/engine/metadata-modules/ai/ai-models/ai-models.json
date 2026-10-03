@@ -346,6 +346,26 @@
         "supportsReasoning": true
       },
       {
+        "name": "gpt-6.1-sol",
+        "label": "GPT-6.1 Sol",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 2,
+        "outputCostPerMillionTokens": 10,
+        "cachedInputCostPerMillionTokens": 0.1,
+        "cacheCreationCostPerMillionTokens": 2.5,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 4,
+          "outputCostPerMillionTokens": 15,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 0.2,
+          "cacheCreationCostPerMillionTokens": 5
+        },
+        "contextWindowTokens": 1050000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
+      },
+      {
         "name": "gpt-4o-2024-08-06",
         "label": "GPT-4o (2024-08-06)",
         "modelFamily": "GPT",
@@ -472,6 +492,33 @@
         "supportsReasoning": true,
         "benchmark": {
           "intelligenceIndex": 21.9,
+          "measuredAt": "2026-09-25"
+        }
+      },
+      {
+        "name": "gpt-daybreak-blue-latest",
+        "label": "Daybreak Blue",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 4,
+        "outputCostPerMillionTokens": 20,
+        "cachedInputCostPerMillionTokens": 0.4,
+        "cacheCreationCostPerMillionTokens": 5,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 8,
+          "outputCostPerMillionTokens": 30,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 0.8,
+          "cacheCreationCostPerMillionTokens": 10
+        },
+        "contextWindowTokens": 1050000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true,
+        "benchmark": {
+          "intelligenceIndex": 47,
+          "outputTokensPerSecond": 72.52,
+          "costPerTask": 1.9885,
+          "effort": "max",
           "measuredAt": "2026-09-25"
         }
       },
@@ -818,6 +865,19 @@
           "measuredAt": "2026-09-25"
         },
         "isDeprecated": true
+      },
+      {
+        "name": "gpt-daybreak-red-latest",
+        "label": "Daybreak Red",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 12.5,
+        "outputCostPerMillionTokens": 75,
+        "cachedInputCostPerMillionTokens": 1.25,
+        "cacheCreationCostPerMillionTokens": 15.625,
+        "contextWindowTokens": 400000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image"],
+        "supportsReasoning": true
       },
       {
         "name": "o3",
@@ -1392,6 +1452,19 @@
         }
       },
       {
+        "name": "claude-sonnet-5-5",
+        "label": "Claude Sonnet 5.5",
+        "modelFamily": "CLAUDE",
+        "inputCostPerMillionTokens": 2,
+        "outputCostPerMillionTokens": 10,
+        "cachedInputCostPerMillionTokens": 0.2,
+        "cacheCreationCostPerMillionTokens": 2.5,
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
+      },
+      {
         "name": "claude-opus-4-7",
         "label": "Claude Opus 4.7",
         "modelFamily": "CLAUDE",
@@ -1884,6 +1957,7 @@
         "modelFamily": "MISTRAL",
         "inputCostPerMillionTokens": 0.3,
         "outputCostPerMillionTokens": 0.9,
+        "cachedInputCostPerMillionTokens": 0.03,
         "contextWindowTokens": 256000,
         "maxOutputTokens": 4096
       },
@@ -1921,6 +1995,7 @@
         "modelFamily": "MISTRAL",
         "inputCostPerMillionTokens": 0.5,
         "outputCostPerMillionTokens": 1.5,
+        "cachedInputCostPerMillionTokens": 0.05,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
         "modalities": ["image"]
@@ -1931,6 +2006,7 @@
         "modelFamily": "MISTRAL",
         "inputCostPerMillionTokens": 0.15,
         "outputCostPerMillionTokens": 0.6,
+        "cachedInputCostPerMillionTokens": 0.015,
         "contextWindowTokens": 256000,
         "maxOutputTokens": 256000,
         "modalities": ["image"],
@@ -2029,6 +2105,7 @@
         "modelFamily": "MISTRAL",
         "inputCostPerMillionTokens": 0.15,
         "outputCostPerMillionTokens": 0.6,
+        "cachedInputCostPerMillionTokens": 0.015,
         "contextWindowTokens": 256000,
         "maxOutputTokens": 256000,
         "modalities": ["image"],
@@ -2043,20 +2120,6 @@
         "contextWindowTokens": 128000,
         "maxOutputTokens": 128000,
         "isDeprecated": true
-      },
-      {
-        "name": "magistral-small",
-        "label": "Magistral Small",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.5,
-        "outputCostPerMillionTokens": 1.5,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000,
-        "supportsReasoning": true,
-        "benchmark": {
-          "intelligenceIndex": 8.2,
-          "measuredAt": "2026-09-25"
-        }
       },
       {
         "name": "labs-devstral-small-2512",
@@ -2075,6 +2138,7 @@
         "modelFamily": "MISTRAL",
         "inputCostPerMillionTokens": 0.5,
         "outputCostPerMillionTokens": 1.5,
+        "cachedInputCostPerMillionTokens": 0.05,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
         "modalities": ["image"]
@@ -2159,6 +2223,7 @@
         "modelFamily": "MISTRAL",
         "inputCostPerMillionTokens": 1.5,
         "outputCostPerMillionTokens": 7.5,
+        "cachedInputCostPerMillionTokens": 0.15,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
         "modalities": ["image"],
@@ -2188,6 +2253,7 @@
         "modelFamily": "MISTRAL",
         "inputCostPerMillionTokens": 1.5,
         "outputCostPerMillionTokens": 7.5,
+        "cachedInputCostPerMillionTokens": 0.15,
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
         "modalities": ["image"],
