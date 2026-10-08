@@ -1,6 +1,6 @@
 {
   "source": "artificialanalysis.ai",
-  "measuredAt": "2026-09-25",
+  "measuredAt": "2026-10-08",
   "models": {
     "gpt-5.4": {
       "intelligenceIndex": 39,
@@ -265,6 +265,20 @@
       "intelligenceIndex": 21.9,
       "measuredAt": "2026-09-25",
       "aliases": ["o3-pro", "ca04852c-eaae-4881-a208-f9b2ca3b7cd6"]
+    },
+    "gpt-daybreak-blue-latest": {
+      "intelligenceIndex": 47,
+      "outputTokensPerSecond": 72.52,
+      "costPerTask": 1.9885,
+      "effort": "max",
+      "measuredAt": "2026-09-25",
+      "aliases": [
+        "gpt-daybreak-blue-latest",
+        "gpt-5.6-sol",
+        "gpt-5-6-sol",
+        "d93edfe8-bf35-49ad-b56e-b18116142a1c",
+        "GPT-5.6 Sol (max)"
+      ]
     },
     "gpt-5.4-mini": {
       "intelligenceIndex": 24.1,
@@ -1445,15 +1459,6 @@
         "devstral-small-2505",
         "cc1fa238-1a76-486d-a997-22309275eadd",
         "Devstral Small (May '25)"
-      ]
-    },
-    "magistral-small": {
-      "intelligenceIndex": 8.2,
-      "measuredAt": "2026-09-25",
-      "aliases": [
-        "magistral-small",
-        "0fec07d5-a9b2-407a-b5f8-5bf10bd86b59",
-        "Magistral Small 1"
       ]
     },
     "pixtral-large-latest": {
